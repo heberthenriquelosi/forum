@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: forum_db
+    environment:
+      MYSQL_DATABASE: forum
+      MYSQL_USER: forum_user
+      MYSQL_PASSWORD: forum_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - forum_network
+
+volumes:
+  mysql_data:
+
+networks:
+  forum_network:
+    driver: bridge
