@@ -1,59 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Forum - Sistema de Fórum Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de fórum desenvolvido em Laravel.
 
-## About Laravel
+## Como Rodar o Projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Pré-requisitos
+- Docker e Docker Compose
+- PHP 8.1+ 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Instalação
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Clone o repositório**
+```bash
+git clone <url-do-repositorio>
+cd forum
+```
 
-## Learning Laravel
+2. **Instale as dependências**
+```bash
+composer install
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+3. **Configure o ambiente**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. **Suba o banco de dados com Docker**
+```bash
+docker-compose up -d
+```
 
-## Laravel Sponsors
+5. **Execute as migrations**
+```bash
+php artisan migrate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Verificação
+```bash
+# Verificar se o Docker está rodando
+docker-compose ps
 
-### Premium Partners
+# Testar conexão com o banco
+php artisan migrate:status
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Decisões Técnicas Tomadas
 
-## Contributing
+### UUID v4 como Identificador
+- **Decisão:** Usar UUID v4 ao invés de auto-increment
+- **Motivo:** Maior segurança, impossibilita enumeration attacks, melhor para sistemas distribuídos
+- **Implementação:** Trait nativo `HasUuids` do Laravel
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Relacionamento Polimórfico para Anexos
+- **Decisão:** Uma tabela `attachments` para Questions e Answers
+- **Motivo:** Evita duplicação de código e tabelas, mantém flexibilidade
+- **Implementação:** `morphMany` e `morphTo` do Eloquent
 
-## Code of Conduct
+### Docker para Banco de Dados
+- **Decisão:** MySQL 8.0 via Docker Compose
+- **Motivo:** Facilita setup do ambiente, isolamento, reprodutibilidade
+- **Configuração:** Porta 3307 para evitar conflitos
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Estrutura de Models
+- **Decisão:** Relacionamentos com chaves estrangeiras nomeadas
+- **Motivo:** Clareza no código, facilita manutenção
+- **Exemplo:** `author_id` ao invés de `user_id` genérico
 
-## Security Vulnerabilities
+## O que Optei por Não Implementar e Por Quê
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+----
 
-## License
+## Pontos que Melhoraria com Mais Tempo
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+------
+
+## Estrutura Atual do Banco
+
+### Users
+- `id` (UUID), `name`, `email`, `password`, `timestamps`
+
+### Questions  
+- `id` (UUID), `author_id` (FK), `title`, `content`, `slug`, `timestamps`
+
+### Answers
+- `id` (UUID), `question_id` (FK), `author_id` (FK), `content`, `timestamps`
+
+### Attachments (Polimórfico)
+- `id` (UUID), `attachable_id`, `attachable_type`, `filename`, `path`, `mime_type`, `size`, `timestamps`
+
+## Tecnologias Utilizadas
+
+- **Laravel 12:** Framework PHP
+- **MySQL 8.0:** Banco de dados
+- **Docker:** Containerização
+- **Eloquent ORM:** Mapeamento objeto-relacional
+- **UUID:** Identificadores únicos universais
