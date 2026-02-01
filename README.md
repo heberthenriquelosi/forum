@@ -12,7 +12,7 @@ Sistema de fórum desenvolvido em Laravel.
 
 1. **Clone o repositório**
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/heberthenriquelosi/forum.git
 cd forum
 ```
 
@@ -63,6 +63,10 @@ php artisan migrate:status
 - **Motivo:** Facilita setup do ambiente, isolamento, reprodutibilidade
 - **Configuração:** Porta 3307 para evitar conflitos
 
+### Laravel Sanctum para Autenticação
+- **Decisão:** Usar Laravel Sanctum ao invés de JWT
+- **Motivo:** Nativo do Laravel, mais simples de implementar.
+
 ### Estrutura de Models
 - **Decisão:** Relacionamentos com chaves estrangeiras nomeadas
 - **Motivo:** Clareza no código, facilita manutenção
@@ -97,3 +101,4 @@ php artisan migrate:status
 - **Docker:** Containerização
 - **Eloquent ORM:** Mapeamento objeto-relacional
 - **UUID:** Identificadores únicos universais
+- **Laravel Sanctum:** Autenticação via token
