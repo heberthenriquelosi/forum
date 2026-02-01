@@ -72,13 +72,44 @@ php artisan migrate:status
 - **Motivo:** Clareza no código, facilita manutenção
 - **Exemplo:** `author_id` ao invés de `user_id` genérico
 
+## Sistema de Autenticação
+
+### Fluxo de Autenticação
+
+1. **Registro/Login:** Retorna token Bearer
+2. **Requisições:** Incluir `Authorization: Bearer {token}` no header
+3. **Logout:** Invalida o token atual
+
+### Segurança
+- Tokens únicos por sessão
+- Senhas com hash bcrypt
+- Middleware de proteção em rotas sensíveis
+- Validação rigorosa de dados de entrada
+
 ## O que Optei por Não Implementar e Por Quê
 
-----
+### Rate Limiting
+- **Por quê:** Foco na funcionalidade core primeiro
+- **Impacto:** Vulnerável a ataques de força bruta
+
+### Refresh Tokens
+- **Por quê:** Sanctum já gerencia expiração automaticamente
+- **Impacto:** Tokens não podem ser renovados sem novo login
+
+### Verificação de Email
+- **Por quê:** Adiciona complexidade desnecessária para MVP
+- **Impacto:** Contas podem ser criadas com emails inválidos
 
 ## Pontos que Melhoraria com Mais Tempo
 
-------
+### Autenticação
+- Implementar rate limiting (5 tentativas/minuto)
+- Sistema de recuperação de senha
+- Verificação de email obrigatória
+
+### Segurança
+- Logs de tentativas de login
+- Detecção de IPs suspeitos
 
 ## Estrutura Atual do Banco
 
@@ -102,3 +133,7 @@ php artisan migrate:status
 - **Eloquent ORM:** Mapeamento objeto-relacional
 - **UUID:** Identificadores únicos universais
 - **Laravel Sanctum:** Autenticação via token
+
+## Documentação Adicional
+
+- **[CURL-TESTES.md](CURL-TESTES.md)** - Testes da API realizados com curl
