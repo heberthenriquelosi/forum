@@ -3,63 +3,78 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $questions = Question::with('author')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return response()->json($questions);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $question = Question::create([
+            'author_id' => $request->user()->id,
+            'title' => $request->title,
+            'content' => $request->content,
+            'slug' => Str::slug($request->title) . '-' . Str::random(8),
+        ]);
+
+        return response()->json($question->load('author'), 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+
+    public function show(Question $question)
     {
-        //
+        return response()->json($question->load('author'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+
+    public function update(Request $request, Question $question)
     {
-        //
+        // Verificar se é o autor
+        if ($question->author_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $question->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'slug' => Str::slug($request->title) . '-' . Str::random(8),
+        ]);
+
+        return response()->json($question->load('author'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Request $request, Question $question)
     {
-        //
+        // Verificar se é o autor
+        if ($question->author_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+
+        $question->delete();
+        
+        return response()->json(['message' => 'Pergunta deletada com sucesso']);
     }
 }
