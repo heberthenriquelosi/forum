@@ -133,6 +133,45 @@ curl -X POST http://localhost:8000/api/login \
 ```
  Status 401 - "Credenciais inválidas"
 
+ ## Testes de Answers
+
+### Listar Answers (Público)
+```bash
+curl -X GET http://localhost:8000/api/questions/UUID_DA_QUESTION/answers
+```
+ Status 200 + array de answers com autores
+
+### Criar Answer (Autenticado)
+```bash
+curl -X POST http://localhost:8000/api/questions/UUID_DA_QUESTION/answers \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_AQUI" \
+  -d '{"content":"Minha resposta para a pergunta"}'
+```
+ Status 201 + answer criada com autor
+
+### Ver Answer Específica (Público)
+```bash
+curl -X GET http://localhost:8000/api/answers/UUID_DA_ANSWER
+```
+ Status 200 + answer com dados do autor e question
+
+### Editar Answer (Só Autor)
+```bash
+curl -X PUT http://localhost:8000/api/answers/UUID_DA_ANSWER \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_AQUI" \
+  -d '{"content":"Resposta editada"}'
+```
+ Status 200 + answer atualizada
+
+### Deletar Answer (Só Autor)
+```bash
+curl -X DELETE http://localhost:8000/api/answers/UUID_DA_ANSWER \
+  -H "Authorization: Bearer TOKEN_AQUI"
+```
+ Status 200 + mensagem "Resposta deletada com sucesso"
+
 ## Verificações de Segurança
 
 -  Senhas hasheadas com bcrypt ($2y$)
@@ -144,5 +183,6 @@ curl -X POST http://localhost:8000/api/login \
 
 **Autenticação:**  Registro, Login, Logout, Verificação  
 **Questions (Perguntas):**  CRUD completo, Validações, Autorização, Slug automático  
+**Answers:**  CRUD completo, Validações, Autorização, Relacionamentos  
 **Validações:**  Email único, senha mínima, campos obrigatórios  
 **Segurança:**  Hash, tokens únicos, invalidação, middleware

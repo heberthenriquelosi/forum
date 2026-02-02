@@ -96,6 +96,14 @@ php artisan migrate:status
 -  Relacionamento com autor
 -  Route Model Binding (busca por UUID)
 
+## Sistema de Answers (Respostas)
+
+### Funcionalidades
+-  CRUD completo de answers
+-  Validação de conteúdo
+-  Autorização (só autor pode editar/deletar)
+-  Relacionamento com question e autor
+
 ## O que Optei por Não Implementar e Por Quê
 
 ### Rate Limiting

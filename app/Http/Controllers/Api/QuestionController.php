@@ -30,7 +30,7 @@ class QuestionController extends Controller
         $question = Question::create([
             'author_id' => $request->user()->id,
             'title' => $request->title,
-            'content' => $request->content,
+            'content' => $request->input('content'),
             'slug' => Str::slug($request->title) . '-' . Str::random(8),
         ]);
 
@@ -40,7 +40,7 @@ class QuestionController extends Controller
 
     public function show(Question $question)
     {
-        return response()->json($question->load('author'));
+        return response()->json($question->load(['author', 'answers.author']));
     }
 
 
@@ -58,7 +58,7 @@ class QuestionController extends Controller
 
         $question->update([
             'title' => $request->title,
-            'content' => $request->content,
+            'content' => $request->input('content'),
             'slug' => Str::slug($request->title) . '-' . Str::random(8),
         ]);
 
