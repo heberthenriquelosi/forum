@@ -86,6 +86,16 @@ php artisan migrate:status
 - Middleware de proteção em rotas sensíveis
 - Validação rigorosa de dados de entrada
 
+## Sistema de Questions (Perguntas)
+
+### Funcionalidades
+-  CRUD completo de questions
+-  Validação de título e conteúdo
+-  Autorização (só autor pode editar/deletar)
+-  Slug automático único
+-  Relacionamento com autor
+-  Route Model Binding (busca por UUID)
+
 ## O que Optei por Não Implementar e Por Quê
 
 ### Rate Limiting
