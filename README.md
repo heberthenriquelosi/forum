@@ -46,6 +46,17 @@ docker-compose ps
 php artisan migrate:status
 ```
 
+### Como Rodar os Testes
+```bash
+# Executar todos os testes
+php artisan test
+
+# Executar testes específicos
+php artisan test --filter AuthTest
+php artisan test --filter QuestionTest
+php artisan test --filter AnswerTest
+```
+
 ## Decisões Técnicas Tomadas
 
 ### UUID v4 como Identificador
@@ -138,6 +149,14 @@ php artisan migrate:status
 - **AttachmentResource:** Padroniza retorno de dados de anexos
 - **Benefícios:** Controle sobre dados expostos, consistência da API
 
+### Testes Automatizados (PHPUnit)
+- **AuthTest:** Testes de autenticação (registro, login, logout)
+- **QuestionTest:** Testes de CRUD de questions com autorização
+- **AnswerTest:** Testes de CRUD de answers com autorização
+- **Factories:** QuestionFactory e AnswerFactory para dados de teste
+- **Metodologia:** Baseados nos testes manuais com curl documentados em CURL-TESTES.md
+- **Benefícios:** Garantia de estabilidade, cobertura dos fluxos principais
+
 ## O que Optei por Não Implementar e Por Quê
 
 ### Rate Limiting
@@ -194,6 +213,8 @@ php artisan migrate:status
 - **Form Requests:** Validação estruturada
 - **Services:** Camada de lógica de negócio
 - **Resources:** Padronização de saída da API
+- **PHPUnit:** Framework de testes automatizados
+- **Factories:** Geração de dados para testes
 
 ## Documentação Adicional
 
