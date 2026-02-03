@@ -138,16 +138,15 @@ php artisan test --filter AnswerTest
 ### Form Requests (Validação)
 - **RegisterRequest:** Validação de registro de usuário
 - **LoginRequest:** Validação de login
-- **StoreQuestionRequest:** Validação de criação de questions (já existente)
 - **Benefícios:** Separação de responsabilidades, validação centralizada
 
 ### Services (Lógica de Negócio)
-- **AttachmentService:** Gerencia upload e armazenamento de arquivos
-- **Benefícios:** Reutilização, testabilidade, single responsibility
+- **Estrutura preparada:** Models com relacionamentos polimórficos para anexos
+- **Benefícios:** Base sólida para implementação futura de upload de arquivos
 
 ### Resources (Padronização de Saída)
-- **AttachmentResource:** Padroniza retorno de dados de anexos
-- **Benefícios:** Controle sobre dados expostos, consistência da API
+- **Estrutura preparada:** Models prontos para implementação de Resources
+- **Benefícios:** Base para padronização futura da saída da API
 
 ### Testes Automatizados (PHPUnit)
 - **AuthTest:** Testes de autenticação (registro, login, logout)
@@ -158,6 +157,16 @@ php artisan test --filter AnswerTest
 - **Benefícios:** Garantia de estabilidade, cobertura dos fluxos principais
 
 ## O que Optei por Não Implementar e Por Quê
+
+### Sistema de Anexos
+- **Por quê:** Estrutura de banco implementada, mas Services e integração nos controllers não foram desenvolvidos
+- **Impacto:** Apenas estrutura polimórfica existe, sem funcionalidade de upload
+- **Decisão:** Priorizar CRUD funcional e testes sobre funcionalidades secundárias
+
+### Interfaces/Contratos
+- **Por quê:** Para este escopo, Policies e Services são suficientes sem over-engineering
+- **Impacto:** Menor flexibilidade para injeção de dependência avançada
+- **Decisão:** Evitar complexidade desnecessária conforme orientação do teste
 
 ### Rate Limiting
 - **Por quê:** Foco na funcionalidade core primeiro
@@ -173,10 +182,21 @@ php artisan test --filter AnswerTest
 
 ## Pontos que Melhoraria com Mais Tempo
 
+### Sistema de Anexos
+- Integrar AttachmentService nos controllers de Question e Answer
+- Implementar endpoints para upload/download de arquivos
+- Adicionar validação de tipos de arquivo e tamanhos
+- Criar testes para upload de arquivos
+
+### Interfaces e Contratos
+- Criar interfaces para Services (AttachmentServiceInterface)
+- Adicionar Service Providers customizados para injeção de dependência
+
 ### Arquitetura
 - Implementar Resources para User, Question e Answer
 - Adicionar Form Requests para Answer (create/update)
 - Criar Services para Question e Answer (extrair lógica dos Controllers)
+- Implementar Event/Listener para ações do sistema
 
 ### Autenticação
 - Implementar rate limiting (5 tentativas/minuto)
@@ -186,6 +206,7 @@ php artisan test --filter AnswerTest
 ### Segurança
 - Logs de tentativas de login
 - Detecção de IPs suspeitos
+- Implementar CORS adequado para produção
 
 ## Estrutura Atual do Banco
 
