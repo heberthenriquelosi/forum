@@ -65,7 +65,17 @@ php artisan migrate:status
 
 ### Laravel Sanctum para Autenticação
 - **Decisão:** Usar Laravel Sanctum ao invés de JWT
-- **Motivo:** Nativo do Laravel, mais simples de implementar.
+- **Motivo:** Nativo do Laravel, mais simples de implementar
+
+### Policies para Autorização
+- **Decisão:** Implementar Policies ao invés de verificações manuais
+- **Motivo:** Separação de responsabilidades, reutilização, Laravel best practices
+- **Implementação:** `QuestionPolicy` e `AnswerPolicy` com `$this->authorize()`
+
+### Form Requests para Validação
+- **Decisão:** Extrair validação para classes dedicadas
+- **Motivo:** Organização do código, reutilização, separação de responsabilidades
+- **Implementação:** `RegisterRequest` e `LoginRequest`
 
 ### Estrutura de Models
 - **Decisão:** Relacionamentos com chaves estrangeiras nomeadas
@@ -84,14 +94,16 @@ php artisan migrate:status
 - Tokens únicos por sessão
 - Senhas com hash bcrypt
 - Middleware de proteção em rotas sensíveis
-- Validação rigorosa de dados de entrada
+- **Policies de autorização** para Questions e Answers
+- **Form Requests** para validação consistente
+- Verificação automática de propriedade (só autor edita/deleta)
 
 ## Sistema de Questions (Perguntas)
 
 ### Funcionalidades
 -  CRUD completo de questions
--  Validação de título e conteúdo
--  Autorização (só autor pode editar/deletar)
+-  **Form Requests** para validação de título e conteúdo
+-  **Policy-based authorization** (só autor pode editar/deletar)
 -  Slug automático único
 -  Relacionamento com autor
 -  Route Model Binding (busca por UUID)
@@ -100,9 +112,31 @@ php artisan migrate:status
 
 ### Funcionalidades
 -  CRUD completo de answers
--  Validação de conteúdo
--  Autorização (só autor pode editar/deletar)
+-  Validação de conteúdo via inline validation
+-  **Policy-based authorization** (só autor pode editar/deletar)
 -  Relacionamento com question e autor
+
+## Arquitetura e Boas Práticas Implementadas
+
+### Policies (Autorização)
+- **QuestionPolicy:** Controla acesso a operações de Questions
+- **AnswerPolicy:** Controla acesso a operações de Answers
+- **AuthServiceProvider:** Registra mapeamento Model → Policy
+- **Benefícios:** Código limpo, reutilizável, testável
+
+### Form Requests (Validação)
+- **RegisterRequest:** Validação de registro de usuário
+- **LoginRequest:** Validação de login
+- **StoreQuestionRequest:** Validação de criação de questions (já existente)
+- **Benefícios:** Separação de responsabilidades, validação centralizada
+
+### Services (Lógica de Negócio)
+- **AttachmentService:** Gerencia upload e armazenamento de arquivos
+- **Benefícios:** Reutilização, testabilidade, single responsibility
+
+### Resources (Padronização de Saída)
+- **AttachmentResource:** Padroniza retorno de dados de anexos
+- **Benefícios:** Controle sobre dados expostos, consistência da API
 
 ## O que Optei por Não Implementar e Por Quê
 
@@ -119,6 +153,11 @@ php artisan migrate:status
 - **Impacto:** Contas podem ser criadas com emails inválidos
 
 ## Pontos que Melhoraria com Mais Tempo
+
+### Arquitetura
+- Implementar Resources para User, Question e Answer
+- Adicionar Form Requests para Answer (create/update)
+- Criar Services para Question e Answer (extrair lógica dos Controllers)
 
 ### Autenticação
 - Implementar rate limiting (5 tentativas/minuto)
@@ -151,6 +190,10 @@ php artisan migrate:status
 - **Eloquent ORM:** Mapeamento objeto-relacional
 - **UUID:** Identificadores únicos universais
 - **Laravel Sanctum:** Autenticação via token
+- **Policies:** Sistema de autorização do Laravel
+- **Form Requests:** Validação estruturada
+- **Services:** Camada de lógica de negócio
+- **Resources:** Padronização de saída da API
 
 ## Documentação Adicional
 
