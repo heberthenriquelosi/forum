@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class QuestionController extends Controller
 {
+    use AuthorizesRequests;
 
     public function index()
     {
@@ -46,10 +48,7 @@ class QuestionController extends Controller
 
     public function update(Request $request, Question $question)
     {
-        // Verificar se é o autor
-        if ($question->author_id !== $request->user()->id) {
-            return response()->json(['message' => 'Não autorizado'], 403);
-        }
+        $this->authorize('update', $question);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -68,10 +67,7 @@ class QuestionController extends Controller
 
     public function destroy(Request $request, Question $question)
     {
-        // Verificar se é o autor
-        if ($question->author_id !== $request->user()->id) {
-            return response()->json(['message' => 'Não autorizado'], 403);
-        }
+        $this->authorize('delete', $question);
 
         $question->delete();
         
