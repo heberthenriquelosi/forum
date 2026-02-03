@@ -32,10 +32,21 @@ php artisan key:generate
 docker-compose up -d
 ```
 
-5. **Execute as migrations**
+5. **Execute as migrations e popule o banco**
 ```bash
-php artisan migrate
+php artisan migrate --seed
 ```
+
+**💡 Dados de teste criados:**
+- **Email:** `test@example.com`
+- **Senha:** `password`
+
+6. **Inicie o servidor**
+```bash
+php artisan serve
+```
+
+**O projeto estará rodando em:** `http://localhost:8000`
 
 ### Verificação
 ```bash
@@ -55,6 +66,42 @@ php artisan test
 php artisan test --filter AuthTest
 php artisan test --filter QuestionTest
 php artisan test --filter AnswerTest
+```
+
+## 🔌 Rotas da API (Endpoints)
+
+### Autenticação
+- `POST /api/register` - Criar conta
+- `POST /api/login` - Entrar e receber Token Bearer
+- `POST /api/logout` - Sair (requer token)
+- `GET /api/user` - Dados do usuário logado (requer token)
+
+### Perguntas (Questions)
+- `GET /api/questions` - Listar perguntas
+- `POST /api/questions` - Criar pergunta (requer token)
+- `GET /api/questions/{id}` - Ver pergunta específica
+- `PUT /api/questions/{id}` - Editar pergunta (apenas autor)
+- `DELETE /api/questions/{id}` - Deletar pergunta (apenas autor)
+
+### Respostas (Answers)
+- `GET /api/questions/{id}/answers` - Listar respostas de uma pergunta
+- `POST /api/questions/{id}/answers` - Responder pergunta (requer token)
+- `GET /api/answers/{id}` - Ver resposta específica
+- `PUT /api/answers/{id}` - Editar resposta (apenas autor)
+- `DELETE /api/answers/{id}` - Deletar resposta (apenas autor)
+
+### 📝 Exemplo de Uso Rápido
+```bash
+# 1. Registrar usuário
+curl -X POST http://localhost:8000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","password":"12345678"}'
+
+# 2. Criar pergunta (usar o token retornado)
+curl -X POST http://localhost:8000/api/questions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -d '{"title":"Como usar Laravel?","content":"Preciso de ajuda"}'
 ```
 
 ## Decisões Técnicas Tomadas
